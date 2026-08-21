@@ -1,53 +1,764 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PORTFOLIO PAGE</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ritabrata Sengupta — Software Developer &amp; ML Engineer</title>
+<meta name="description" content="Portfolio of Ritabrata Sengupta — Software Developer, Full-Stack Engineer &amp; Machine Learning practitioner." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  :root{
+    --bg:        #0A1120;
+    --bg-2:      #0F1A2E;
+    --panel:     #121E36;
+    --panel-2:   #16233F;
+    --line:      #223252;
+    --ink:       #E7ECF6;
+    --ink-dim:   #93A1BE;
+    --ink-faint: #5A6789;
+    --copper:    #C97A3D;
+    --copper-lt: #E39A5B;
+    --phosphor:  #F2B84B;
+    --signal:    #4FD1C5;
+    --signal-dim:#2C7A72;
+    --danger:    #E15C5C;
+
+    --vignette-rgb: 10,17,32;
+    --face-bg: rgba(18,30,54,0.75);
+    --grain-opacity: 0.035;
+    --grain-blend: overlay;
+  }
+
+  html[data-theme="light"]{
+    --bg:        #FAF9F5;
+    --bg-2:      #F1EFE7;
+    --panel:     #FFFFFF;
+    --panel-2:   #F5F3EC;
+    --line:      #DAD5C7;
+    --ink:       #1C2333;
+    --ink-dim:   #5B647C;
+    --ink-faint: #94957F;
+    --copper:    #B3652C;
+    --copper-lt: #96501F;
+    --phosphor:  #B07A17;
+    --signal:    #12796F;
+    --signal-dim:#BFE3DF;
+    --danger:    #C0453F;
+
+    --vignette-rgb: 250,249,245;
+    --face-bg: rgba(255,255,255,0.75);
+    --grain-opacity: 0.025;
+    --grain-blend: multiply;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    transition: background .35s ease, color .35s ease;
+  }
+  .font-display{ font-family:'Space Grotesk',sans-serif; }
+  .font-mono{ font-family:'JetBrains Mono',monospace; }
+
+  ::selection{ background:var(--copper); color:#0A1120; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:6px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--copper); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* ---------- circuit background ---------- */
+  .circuit-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    opacity:0.55;
+  }
+  .trace{
+    stroke:var(--line);
+    stroke-width:1.4;
+    fill:none;
+  }
+  .trace-live{
+    stroke:var(--copper);
+    stroke-width:1.6;
+    fill:none;
+    stroke-dasharray:6 10;
+    animation:flow 5s linear infinite;
+    opacity:0.85;
+  }
+  .trace-live.slow{ animation-duration:9s; stroke:var(--signal); }
+  .trace-live.fast{ animation-duration:3.2s; }
+  @keyframes flow{ to{ stroke-dashoffset:-160; } }
+  .node{ fill:var(--bg); stroke:var(--line); stroke-width:1.4; }
+  .node-live{ fill:var(--copper); }
+  .node-live.signal{ fill:var(--signal); }
+
+  .vignette{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 0%, transparent 0%, rgba(var(--vignette-rgb),0.15) 45%, var(--bg) 92%);
+    transition: background .35s ease;
+  }
+  .grain{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    opacity:var(--grain-opacity); mix-blend-mode:var(--grain-blend);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  section, header, footer{ position:relative; z-index:3; }
+
+  .site-header{
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+    transition: background .35s ease, border-color .35s ease;
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle{
+    width:38px; height:38px; border:1px solid var(--line); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; position:relative;
+    cursor:pointer; background:transparent; transition:border-color .25s ease, transform .2s ease;
+  }
+  .theme-toggle:hover{ border-color:var(--copper); transform:translateY(-1px); }
+  .theme-toggle svg{ width:17px; height:17px; stroke:var(--ink-dim); transition:stroke .25s ease, opacity .25s ease, transform .4s ease; position:absolute; }
+  .theme-toggle .icon-sun{ opacity:0; transform:rotate(-90deg) scale(0.6); }
+  .theme-toggle .icon-moon{ opacity:1; transform:rotate(0deg) scale(1); }
+  html[data-theme="light"] .theme-toggle .icon-sun{ opacity:1; transform:rotate(0deg) scale(1); }
+  html[data-theme="light"] .theme-toggle .icon-moon{ opacity:0; transform:rotate(90deg) scale(0.6); }
+
+  /* ---------- chip panel ---------- */
+  .chip{
+    background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border:1px solid var(--line);
+    transition: background .35s ease, border-color .35s ease;
+    position:relative;
+    clip-path: polygon(
+      14px 0, calc(100% - 14px) 0, 100% 14px,
+      100% calc(100% - 14px), calc(100% - 14px) 100%,
+      14px 100%, 0 calc(100% - 14px), 0 14px
+    );
+  }
+  .chip::before, .chip::after{
+    content:''; position:absolute; width:14px; height:2px; background:var(--copper); opacity:0.7;
+  }
+  .chip-pin{
+    position:absolute; width:10px; height:2px; background:var(--line);
+  }
+
+  .tilt-wrap{ perspective:1000px; }
+  .tilt{ transition: transform .15s ease-out, border-color .3s ease; will-change:transform; }
+  .tilt:hover{ border-color:var(--copper); }
+
+  .glow-copper{ box-shadow:0 0 0 rgba(201,122,61,0); transition:box-shadow .4s ease; }
+  .glow-copper:hover{ box-shadow:0 0 40px -10px rgba(201,122,61,0.45); }
+
+  /* ---------- eyebrow / labels ---------- */
+  .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.08em;
+    color:var(--ink-faint);
+  }
+  .pill{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    padding:0.32rem 0.7rem;
+    border:1px solid var(--line);
+    color:var(--ink-dim);
+    background:rgba(255,255,255,0.02);
+    transition:border-color .25s ease, color .25s ease, transform .25s ease;
+  }
+  .pill:hover{ border-color:var(--signal); color:var(--signal); transform:translateY(-2px); }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- terminal / typing ---------- */
+  .caret{
+    display:inline-block; width:0.55ch; background:var(--phosphor);
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ---------- status dot ---------- */
+  .dot{ width:7px; height:7px; border-radius:50%; background:var(--signal); box-shadow:0 0 8px var(--signal); animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  /* ---------- nav ---------- */
+  .navlink{ position:relative; color:var(--ink-dim); transition:color .25s ease; }
+  .navlink::after{
+    content:''; position:absolute; left:0; bottom:-4px; height:1px; width:0%;
+    background:var(--copper); transition:width .25s ease;
+  }
+  .navlink:hover{ color:var(--ink); }
+  .navlink:hover::after{ width:100%; }
+
+  /* ---------- timeline ---------- */
+  .rail{
+    background:linear-gradient(180deg, transparent 0%, var(--line) 8%, var(--line) 92%, transparent 100%);
+  }
+  .rail-node{
+    width:13px; height:13px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--copper);
+  }
+
+  /* ---------- 3D rotating chip (hero) ---------- */
+  .stage{ perspective:1400px; }
+  .cube{
+    width:180px; height:180px; position:relative; transform-style:preserve-3d;
+    animation:spin 16s linear infinite;
+    margin:0 auto;
+  }
+  @keyframes spin{
+    from{ transform:rotateX(-18deg) rotateY(0deg); }
+    to{ transform:rotateX(-18deg) rotateY(360deg); }
+  }
+  .face{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--copper); background:var(--face-bg); backdrop-filter:blur(2px);
+    font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--copper-lt);
+    letter-spacing:0.06em;
+    transition: background .35s ease;
+  }
+  .f-front { transform: translateZ(90px); }
+  .f-back  { transform: rotateY(180deg) translateZ(90px); }
+  .f-right { transform: rotateY(90deg) translateZ(90px); }
+  .f-left  { transform: rotateY(-90deg) translateZ(90px); }
+  .f-top   { transform: rotateX(90deg) translateZ(90px); }
+  .f-bottom{ transform: rotateX(-90deg) translateZ(90px); }
+
+  .badge-cgpa{
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--phosphor);
+    border:1px solid rgba(242,184,75,0.35); padding:2px 8px;
+  }
+
+  a.link-copper{ color:var(--copper-lt); text-decoration:none; border-bottom:1px solid rgba(201,122,61,0.35); transition:border-color .2s ease, color .2s ease; }
+  a.link-copper:hover{ color:var(--phosphor); border-color:var(--phosphor); }
+
+  .btn-primary{
+    background:var(--copper); color:#0A1120; font-family:'JetBrains Mono',monospace; font-weight:600;
+    transition:background .25s ease, transform .2s ease, box-shadow .25s ease;
+  }
+  .btn-primary:hover{ background:var(--copper-lt); transform:translateY(-2px); box-shadow:0 10px 30px -10px rgba(201,122,61,0.6); }
+
+  .btn-ghost{
+    border:1px solid var(--line); color:var(--ink); font-family:'JetBrains Mono',monospace;
+    transition:border-color .25s ease, color .25s ease, transform .2s ease;
+  }
+  .btn-ghost:hover{ border-color:var(--signal); color:var(--signal); transform:translateY(-2px); }
+
+  .num{ font-family:'JetBrains Mono',monospace; color:var(--ink-faint); font-size:0.75rem; }
+
+  .marquee-strip{
+    background: color-mix(in srgb, var(--bg-2) 40%, transparent);
+    transition: background .35s ease;
+  }
+  .marquee-track{
+    display:flex; gap:3rem; white-space:nowrap;
+    animation:marquee 22s linear infinite;
+  }
+  @keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  .copy-toast{
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--panel-2); border:1px solid var(--copper); color:var(--ink);
+    font-family:'JetBrains Mono',monospace; font-size:0.8rem; padding:0.6rem 1.1rem;
+    opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; z-index:50;
+  }
+  .copy-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
 </head>
-<body>
-    <header><u><h1> PORTFOLIO PAGE- </h1></u></header> 
-    <main>  
-    <!-- <u><h1> PORTFOLIO PAGE </h1></u> -->
-    <br>
-    <p>Name : Ritabrata Sengupta</p>
-    
-    <p>Address : 19, Pubpara Road Belgharia kolkata-700056</p>
-    <br>
-    <!-- <p>My Details</p> -->
+<body class="antialiased">
 
-    <a href="./Education.html"target="_main">EDUCATION DETAILS</a>
-    <br>
-    <br>
-    <a href="./Experence.html"target="_main">EXPERENCE  DETAILS</a>
-    <br>
-    <br>
-    <a href="./Projects.html"target="_main">PROJECT DETAILS</a>
-    <br>
-    <u><h2>MORE DETAILS ABOUT MYSELF- </h2></u>
-    <br>
-    <a href="https://www.facebook.com/"target="_main"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Facebook_icon_2013.svg/2048px-Facebook_icon_2013.svg.png" alt="facebook"height="50">
-    </a>
-    <br>
+<!-- circuit background -->
+<svg class="circuit-bg" viewBox="0 0 1440 2400" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+  <path class="trace" d="M0 120 H240 V260 H520 V80 H900" />
+  <path class="trace" d="M1440 200 H1180 V420 H860 V180" />
+  <path class="trace" d="M0 640 H180 V520 H460" />
+  <path class="trace" d="M1440 700 H1100 V860 H760 V700 H520" />
+  <path class="trace" d="M0 1120 H320 V980 H640 V1180" />
+  <path class="trace" d="M1440 1240 H1020 V1080 H700" />
+  <path class="trace" d="M0 1560 H260 V1720 H560" />
+  <path class="trace" d="M1440 1680 H1160 V1520 H820 V1740" />
+  <path class="trace" d="M0 2020 H300 V1900 H680" />
+  <path class="trace" d="M1440 2100 H1180 V2260 H860" />
 
-    <a href="https://www.instagram.com/"target="_main"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/768px-Instagram_logo_2016.svg.png" alt="instagram"height="50">
-    </a>
-    <br>
+  <path class="trace-live" d="M0 120 H240 V260 H520 V80 H900" />
+  <path class="trace-live slow" d="M1440 200 H1180 V420 H860 V180" />
+  <path class="trace-live fast" d="M0 640 H180 V520 H460" />
+  <path class="trace-live" d="M1440 700 H1100 V860 H760 V700 H520" />
+  <path class="trace-live slow" d="M0 1120 H320 V980 H640 V1180" />
+  <path class="trace-live fast" d="M1440 1240 H1020 V1080 H700" />
+  <path class="trace-live" d="M0 1560 H260 V1720 H560" />
+  <path class="trace-live slow" d="M1440 1680 H1160 V1520 H820 V1740" />
+  <path class="trace-live fast" d="M0 2020 H300 V1900 H680" />
+  <path class="trace-live" d="M1440 2100 H1180 V2260 H860" />
 
-    <a href="https://www.linkedin.com/in/ritabrata-sengupta-561a50206"target="_main"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/640px-LinkedIn_logo_initials.png" alt="linkedin"height="50">
+  <circle class="node" cx="240" cy="120" r="4" />
+  <circle class="node node-live" cx="520" cy="260" r="4.5" />
+  <circle class="node" cx="900" cy="80" r="4" />
+  <circle class="node node-live signal" cx="1180" cy="200" r="4.5" />
+  <circle class="node" cx="860" cy="420" r="4" />
+  <circle class="node node-live" cx="460" cy="640" r="4.5" />
+  <circle class="node" cx="760" cy="860" r="4" />
+  <circle class="node node-live signal" cx="1100" cy="700" r="4.5" />
+  <circle class="node" cx="640" cy="1120" r="4" />
+  <circle class="node node-live" cx="1020" cy="1240" r="4.5" />
+  <circle class="node" cx="260" cy="1560" r="4" />
+  <circle class="node node-live signal" cx="820" cy="1680" r="4.5" />
+  <circle class="node" cx="680" cy="2020" r="4" />
+  <circle class="node node-live" cx="1180" cy="2100" r="4.5" />
+</svg>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<!-- ============ NAV ============ -->
+<header class="site-header fixed top-0 inset-x-0 z-40 backdrop-blur-md border-b border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+    <a href="#top" class="font-mono text-sm tracking-wide text-[var(--ink)]">
+      <span class="text-[var(--copper)]">&lt;</span>RS<span class="text-[var(--copper)]">/&gt;</span>
     </a>
-    <br>
-    <a href="https://www.naukri.com/mnjuser/profile?id=&orgn=homepage"target="_main"><img src="https://static.naukri.com/s/4/100/i/naukriLogoIcon200.png" alt="naukri"height="50">
-    </a>
-    <br>
-    </main> 
-    <footer>
-        <pre>
-            Ritabrata Sengupta
-                 signature
-        </pre>
-    </footer>
-    
+    <nav class="hidden md:flex items-center gap-8 font-mono text-xs">
+      <a href="#about" class="navlink">about</a>
+      <a href="#skills" class="navlink">modules</a>
+      <a href="#projects" class="navlink">projects</a>
+      <a href="#experience" class="navlink">education</a>
+      <a href="#certs" class="navlink">certs</a>
+      <a href="#contact" class="navlink">contact</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <a href="#contact" class="pill hidden md:inline-block">get_in_touch()</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="top" class="min-h-screen flex items-center pt-24 pb-16">
+  <div class="max-w-6xl mx-auto px-6 md:px-10 w-full grid md:grid-cols-[1.15fr_0.85fr] gap-14 items-center">
+
+    <div>
+      <div class="flex items-center gap-2 mb-6">
+        <span class="dot"></span>
+        <span class="tag">STATUS: OPEN_TO_WORK &nbsp;//&nbsp; BOOTING PORTFOLIO.EXE</span>
+      </div>
+
+      <p id="typeline" class="font-mono text-[var(--signal)] text-sm md:text-base mb-4 min-h-[1.5em]"></p>
+
+      <h1 class="font-display font-700 text-5xl sm:text-6xl lg:text-7xl leading-[0.98] mb-6">
+        Ritabrata<br/>
+        <span class="text-[var(--copper)]">Sengupta</span>
+      </h1>
+
+      <p class="text-[var(--ink-dim)] text-base md:text-lg max-w-xl mb-8 leading-relaxed">
+        Computer Science graduate who builds full-stack applications with Spring Boot, Angular and React, and
+        trains machine learning models with Scikit-learn and CNNs. Comfortable moving between REST APIs,
+        relational schemas and data pipelines.
+      </p>
+
+      <div class="flex flex-wrap gap-3 mb-10">
+        <span class="pill">Software Developer</span>
+        <span class="pill">Full-Stack Engineer</span>
+        <span class="pill">Data Analyst</span>
+        <span class="pill">ML Engineer</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <a href="#projects" class="btn-primary px-6 py-3 text-sm inline-flex items-center gap-2">
+          view_projects <span aria-hidden="true">→</span>
+        </a>
+        <a href="#contact" class="btn-ghost px-6 py-3 text-sm">contact_me</a>
+        <a href="https://github.com/RitabrataSG" target="_blank" rel="noopener" class="link-copper font-mono text-sm">github.com/RitabrataSG</a>
+      </div>
+    </div>
+
+    <!-- 3D rotating chip -->
+    <div class="stage hidden md:flex items-center justify-center">
+      <div class="cube">
+        <div class="face f-front">CPU::CS_&amp;_TECH</div>
+        <div class="face f-back">EEE::SIGNALS</div>
+        <div class="face f-right">ML::CNN</div>
+        <div class="face f-left">WEB::REST</div>
+        <div class="face f-top">DB::SQL</div>
+        <div class="face f-bottom">GIT::VCS</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- marquee strip -->
+<div class="marquee-strip border-y border-[var(--line)] py-4 overflow-hidden">
+  <div class="marquee-track font-mono text-xs text-[var(--ink-faint)]">
+    <span>PYTHON</span><span>JAVA</span><span>JAVASCRIPT</span><span>SPRING BOOT</span><span>ANGULAR</span>
+    <span>REACT</span><span>MYSQL</span><span>MONGODB</span><span>SCIKIT-LEARN</span><span>PANDAS</span>
+    <span>NUMPY</span><span>CNN</span><span>DJANGO</span><span>GIT</span>
+    <span>PYTHON</span><span>JAVA</span><span>JAVASCRIPT</span><span>SPRING BOOT</span><span>ANGULAR</span>
+    <span>REACT</span><span>MYSQL</span><span>MONGODB</span><span>SCIKIT-LEARN</span><span>PANDAS</span>
+    <span>NUMPY</span><span>CNN</span><span>DJANGO</span><span>GIT</span>
+  </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="max-w-6xl mx-auto px-6 md:px-10 py-28">
+  <div class="reveal grid md:grid-cols-[0.4fr_0.6fr] gap-12">
+    <div>
+      <p class="tag mb-3">01 // ABOUT</p>
+      <h2 class="font-display text-3xl md:text-4xl font-600">Profile summary</h2>
+    </div>
+    <div class="text-[var(--ink-dim)] leading-relaxed text-base md:text-lg space-y-5">
+      <p>
+        I'm a final-year B.Tech student in Computer Science and Technology, building a foundation across
+        software development, data science and machine learning. My work spans full-stack web applications,
+        predictive models and data analysis — I like understanding a problem end to end, from the schema
+        to the API to the chart it eventually shows up in.
+      </p>
+      <p>
+        Before computer science, I studied Electronics and Telecommunication Engineering, which is where the
+        interest in signals, systems and how things are wired together comes from — you'll see that show up
+        as the visual language of this page. Today I work mainly in
+        <span class="text-[var(--ink)]">Python</span>, <span class="text-[var(--ink)]">Java</span> and
+        <span class="text-[var(--ink)]">JavaScript</span>, with <span class="text-[var(--ink)]">Spring Boot</span>,
+        <span class="text-[var(--ink)]">Angular</span> and <span class="text-[var(--ink)]">React</span> on the
+        application side, and <span class="text-[var(--ink)]">Scikit-learn</span>,
+        <span class="text-[var(--ink)]">Pandas</span> and <span class="text-[var(--ink)]">NumPy</span> on the
+        data side.
+      </p>
+      <p>
+        I'm looking for an entry-level role as a Software Developer, Full-Stack Developer, Data Analyst,
+        Data Scientist or Machine Learning Engineer.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS / MODULES ============ -->
+<section id="skills" class="max-w-6xl mx-auto px-6 md:px-10 py-20">
+  <div class="reveal mb-14">
+    <p class="tag mb-3">02 // MODULES LOADED</p>
+    <h2 class="font-display text-3xl md:text-4xl font-600">Technical skills</h2>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full">
+        <p class="font-mono text-xs text-[var(--copper-lt)] mb-4">// LANGUAGES</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">Python</span><span class="pill">Java</span><span class="pill">JavaScript</span>
+          <span class="pill">SQL</span><span class="pill">Machine Learning</span><span class="pill">Scikit-learn</span>
+          <span class="pill">Pandas</span><span class="pill">NumPy</span><span class="pill">CNN</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full">
+        <p class="font-mono text-xs text-[var(--copper-lt)] mb-4">// FRAMEWORKS</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">Spring Boot</span><span class="pill">Spring MVC</span><span class="pill">Spring Data JPA</span>
+          <span class="pill">Django</span><span class="pill">Angular</span><span class="pill">React</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full">
+        <p class="font-mono text-xs text-[var(--copper-lt)] mb-4">// DATABASES</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">MySQL</span><span class="pill">MongoDB</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full">
+        <p class="font-mono text-xs text-[var(--copper-lt)] mb-4">// DEV TOOLS</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">Git</span><span class="pill">GitHub</span><span class="pill">VS Code</span>
+          <span class="pill">Eclipse</span><span class="pill">IntelliJ</span><span class="pill">Jupyter Notebook</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects" class="max-w-6xl mx-auto px-6 md:px-10 py-20">
+  <div class="reveal mb-14">
+    <p class="tag mb-3">03 // BUILD LOG</p>
+    <h2 class="font-display text-3xl md:text-4xl font-600">Projects</h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full flex flex-col">
+        <div class="flex items-center justify-between mb-5">
+          <span class="font-mono text-xs text-[var(--ink-faint)]">MAR 2026</span>
+          <span class="font-mono text-xs text-[var(--signal)]">ML</span>
+        </div>
+        <h3 class="font-display text-xl font-600 mb-3">Stock Prediction System</h3>
+        <p class="text-[var(--ink-dim)] text-sm leading-relaxed mb-6 flex-1">
+          A stock market prediction system built on historical financial data, using CNN-based predictive
+          modeling to analyze market trends after data preprocessing and visualization, aimed at supporting
+          data-driven decisions.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill text-[11px]">Python</span><span class="pill text-[11px]">CNN</span>
+          <span class="pill text-[11px]">Pandas</span><span class="pill text-[11px]">NumPy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full flex flex-col">
+        <div class="flex items-center justify-between mb-5">
+          <span class="font-mono text-xs text-[var(--ink-faint)]">NOV 2025</span>
+          <span class="font-mono text-xs text-[var(--signal)]">FULL-STACK</span>
+        </div>
+        <h3 class="font-display text-xl font-600 mb-3">Food Delivery System</h3>
+        <p class="text-[var(--ink-dim)] text-sm leading-relaxed mb-6 flex-1">
+          A full-stack food delivery application with RESTful APIs for user management, restaurant listings
+          and order processing, backed by MySQL and a responsive Angular front end.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill text-[11px]">Java</span><span class="pill text-[11px]">Spring Boot</span>
+          <span class="pill text-[11px]">Angular</span><span class="pill text-[11px]">MySQL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full flex flex-col">
+        <div class="flex items-center justify-between mb-5">
+          <span class="font-mono text-xs text-[var(--ink-faint)]">JUL 2025</span>
+          <span class="font-mono text-xs text-[var(--signal)]">ML</span>
+        </div>
+        <h3 class="font-display text-xl font-600 mb-3">Breast Cancer Detection</h3>
+        <p class="text-[var(--ink-dim)] text-sm leading-relaxed mb-6 flex-1">
+          A classification model that labels breast tumors as malignant or benign from healthcare datasets,
+          built with feature engineering and Scikit-learn training to improve prediction accuracy.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill text-[11px]">Python</span><span class="pill text-[11px]">Scikit-learn</span>
+          <span class="pill text-[11px]">Pandas</span><span class="pill text-[11px]">NumPy</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ EDUCATION TIMELINE ============ -->
+<section id="experience" class="max-w-6xl mx-auto px-6 md:px-10 py-20">
+  <div class="reveal mb-14">
+    <p class="tag mb-3">04 // SIGNAL PATH</p>
+    <h2 class="font-display text-3xl md:text-4xl font-600">Education</h2>
+  </div>
+
+  <div class="relative pl-10">
+    <div class="rail absolute left-[7px] top-1 bottom-1 w-[2px]"></div>
+
+    <div class="reveal relative mb-14">
+      <div class="rail-node absolute -left-[38px] top-1"></div>
+      <p class="font-mono text-xs text-[var(--copper-lt)] mb-1">JUL 2023 — JUN 2026</p>
+      <h3 class="font-display text-xl font-600 mb-1">B.Tech, Computer Science and Technology</h3>
+      <div class="flex items-center gap-3 flex-wrap">
+        <p class="text-[var(--ink-dim)] text-sm">JIS College of Engineering, Kalyani, West Bengal</p>
+        <span class="badge-cgpa">CGPA 8.5</span>
+      </div>
+    </div>
+
+    <div class="reveal relative mb-14">
+      <div class="rail-node absolute -left-[38px] top-1"></div>
+      <p class="font-mono text-xs text-[var(--copper-lt)] mb-1">JUN 2019 — JUL 2022</p>
+      <h3 class="font-display text-xl font-600 mb-1">Diploma, Electronics &amp; Telecommunication Engineering</h3>
+      <div class="flex items-center gap-3 flex-wrap">
+        <p class="text-[var(--ink-dim)] text-sm">Narula Institute of Technology, Agarpara, West Bengal</p>
+        <span class="badge-cgpa">CGPA 8.0</span>
+      </div>
+    </div>
+
+    <div class="reveal relative mb-14">
+      <div class="rail-node absolute -left-[38px] top-1"></div>
+      <p class="font-mono text-xs text-[var(--copper-lt)] mb-1">MAR 2018 — MAR 2020</p>
+      <h3 class="font-display text-xl font-600 mb-1">Higher Secondary</h3>
+      <div class="flex items-center gap-3 flex-wrap">
+        <p class="text-[var(--ink-dim)] text-sm">Central Model School, Barrackpore, West Bengal</p>
+        <span class="badge-cgpa">CGPA 6.1</span>
+      </div>
+    </div>
+
+    <div class="reveal relative">
+      <div class="rail-node absolute -left-[38px] top-1"></div>
+      <p class="font-mono text-xs text-[var(--copper-lt)] mb-1">MAR 2016 — MAR 2017</p>
+      <h3 class="font-display text-xl font-600 mb-1">Secondary Education</h3>
+      <div class="flex items-center gap-3 flex-wrap">
+        <p class="text-[var(--ink-dim)] text-sm">Khalsa Model Senior Secondary School, Baranagar, West Bengal</p>
+        <span class="badge-cgpa">CGPA 7.4</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CERTIFICATIONS ============ -->
+<section id="certs" class="max-w-6xl mx-auto px-6 md:px-10 py-20">
+  <div class="reveal mb-14">
+    <p class="tag mb-3">05 // VERIFIED MODULES</p>
+    <h2 class="font-display text-3xl md:text-4xl font-600">Certifications</h2>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full">
+        <p class="font-mono text-xs text-[var(--ink-faint)] mb-2">JAN — APR 2025 · NPTEL, IIT KHARAGPUR</p>
+        <h3 class="font-display text-lg font-600 mb-3">Introduction to Internet of Things</h3>
+        <div class="flex items-center gap-3">
+          <div class="h-1.5 flex-1 bg-[var(--line)] overflow-hidden">
+            <div class="h-full bg-[var(--copper)]" style="width:70%"></div>
+          </div>
+          <span class="font-mono text-xs text-[var(--copper-lt)]">70% · Elite</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tilt-wrap reveal">
+      <div class="tilt chip glow-copper p-7 h-full">
+        <p class="font-mono text-xs text-[var(--ink-faint)] mb-2">JUL — OCT 2024 · NPTEL, IIT GUWAHATI</p>
+        <h3 class="font-display text-lg font-600 mb-3">Fundamentals of Artificial Intelligence</h3>
+        <div class="flex items-center gap-3">
+          <div class="h-1.5 flex-1 bg-[var(--line)] overflow-hidden">
+            <div class="h-full bg-[var(--copper)]" style="width:55%"></div>
+          </div>
+          <span class="font-mono text-xs text-[var(--copper-lt)]">55%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="max-w-6xl mx-auto px-6 md:px-10 py-28">
+  <div class="reveal chip glow-copper p-10 md:p-16 text-center">
+    <p class="tag mb-4">06 // OPEN CHANNEL</p>
+    <h2 class="font-display text-3xl md:text-5xl font-600 mb-6">Let's build something.</h2>
+    <p class="text-[var(--ink-dim)] max-w-xl mx-auto mb-10">
+      Open to entry-level roles in software development, full-stack engineering, data analysis and
+      machine learning. Reach out — I reply fast.
+    </p>
+
+    <div class="flex flex-wrap items-center justify-center gap-4 mb-10">
+      <button id="copyEmail" class="btn-primary px-6 py-3 text-sm">sgritabrata@gmail.com</button>
+      <a href="tel:+916290686642" class="btn-ghost px-6 py-3 text-sm">+91 6290686642</a>
+    </div>
+
+    <div class="flex items-center justify-center gap-8 font-mono text-sm">
+      <a href="https://linkedin.com/in/ritabrata-sengupta" target="_blank" rel="noopener" class="link-copper">LinkedIn</a>
+      <a href="https://github.com/RitabrataSG" target="_blank" rel="noopener" class="link-copper">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer class="max-w-6xl mx-auto px-6 md:px-10 pb-10">
+  <div class="border-t border-[var(--line)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <p class="font-mono text-xs text-[var(--ink-faint)]">© 2026 Ritabrata Sengupta — built with HTML, CSS &amp; JS</p>
+    <p class="font-mono text-xs text-[var(--ink-faint)]">EOF</p>
+  </div>
+</footer>
+
+<div id="toast" class="copy-toast">copied to clipboard →</div>
+
+<script>
+  // ---- theme init + toggle ----
+  (function(){
+    const root = document.documentElement;
+    const saved = localStorage.getItem('rs-theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initial = saved || (prefersLight ? 'light' : 'dark');
+    if(initial === 'light') root.setAttribute('data-theme','light');
+
+    const btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', ()=>{
+      const isLight = root.getAttribute('data-theme') === 'light';
+      if(isLight){
+        root.removeAttribute('data-theme');
+        localStorage.setItem('rs-theme','dark');
+      } else {
+        root.setAttribute('data-theme','light');
+        localStorage.setItem('rs-theme','light');
+      }
+    });
+  })();
+
+  // ---- terminal type effect ----
+  const line = "$ whoami --role=\"software_developer,ml_engineer\"";
+  const el = document.getElementById('typeline');
+  let i = 0;
+  function typeIt(){
+    if(i <= line.length){
+      el.innerHTML = line.slice(0,i) + '<span class="caret">&nbsp;</span>';
+      i++;
+      setTimeout(typeIt, 32);
+    } else {
+      el.innerHTML = line + '<span class="caret">&nbsp;</span>';
+    }
+  }
+  typeIt();
+
+  // ---- scroll reveal ----
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold:0.12 });
+  document.querySelectorAll('.reveal').forEach(elm=> io.observe(elm));
+
+  // ---- 3D tilt on chip cards ----
+  document.querySelectorAll('.tilt-wrap').forEach(wrap=>{
+    const card = wrap.querySelector('.tilt');
+    wrap.addEventListener('mousemove', (e)=>{
+      const r = wrap.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `rotateY(${x*10}deg) rotateX(${-y*10}deg) translateZ(6px)`;
+    });
+    wrap.addEventListener('mouseleave', ()=>{
+      card.style.transform = 'rotateY(0deg) rotateX(0deg) translateZ(0)';
+    });
+  });
+
+  // ---- copy email ----
+  const copyBtn = document.getElementById('copyEmail');
+  const toast = document.getElementById('toast');
+  copyBtn.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText('sgritabrata@gmail.com');
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 1800);
+    }catch(err){
+      window.location.href = 'mailto:sgritabrata@gmail.com';
+    }
+  });
+</script>
+
 </body>
 </html>
